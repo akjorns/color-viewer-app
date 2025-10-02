@@ -4,7 +4,7 @@ import numpy as np
 
 # --- App Title and Description ---
 st.set_page_config(layout="wide")
-st.title("Interactive CIE L*a*b* Color Palette Viewer")
+st.title("Interactive CIE Lab Color Palette Viewer")
 st.write("""
 This app visualizes color palettes in the 3D CIE L*a*b* color space.
 Use the dropdown menu on the left to select a palette and see its colors plotted on the graph.
