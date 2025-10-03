@@ -100,8 +100,8 @@ if groups:
             marker=dict(
                 size=7,
                 opacity=1.0, # Make points fully opaque
-                color=marker_colors, # Apply true colors
-                line=dict(width=1, color='black') # Add a thin black outline
+                color=marker_colors # Apply true colors
+                # Outline has been removed
             ),
             name=f"Group {group_name}",
             visible=is_visible,
