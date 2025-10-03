@@ -1,39 +1,38 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
-import pandas as pd # Import the pandas library
+import pandas as pd
 
 # --- App Title and Description ---
 st.set_page_config(layout="wide")
 st.title("Color Marking Analyzer")
 st.write("""
-This app visualizes your color data in the 3D CIE L*a*b* color space.
+This app visualizes your color data in the 3D CIE L*a*b* color space. Each point is colored according to its true RGB value.
 Use the multi-select menu on the left to filter by group.
 """)
 
 # --- 1. Load Your Actual Data from CSV ---
-# This function reads the CSV and processes it.
 @st.cache_data
 def load_data():
     """Loads color data from the CSV file and groups it."""
     try:
-        # Read the csv file from your GitHub repository
         df = pd.read_csv("color_data.csv")
     except FileNotFoundError:
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
         return [], []
 
-    # Get a sorted list of unique group names
-    # We convert to string to handle any group numbers correctly.
+    # Ensure RGB columns are treated as integers
+    for col in ['R', 'G', 'B']:
+        if col not in df.columns:
+            st.error(f"Error: Column '{col}' not found in the CSV. Please check your data file.")
+            return [], []
+        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+
     group_names = sorted(df['Group'].unique().astype(str))
     
-    # Restructure the data into a list of dictionaries, similar to our old format
     grouped_data = []
     for name in group_names:
-        # Filter the dataframe for the current group
         group_df = df[df['Group'].astype(str) == name]
-        
-        # Store the relevant data for this group
         grouped_data.append({
             "groupName": name,
             "data": group_df
@@ -41,16 +40,15 @@ def load_data():
         
     return grouped_data, group_names
 
-# Load the data
 groups, group_names = load_data()
 
-# --- 2. Sidebar for User Input (Multi-select) ---
-if groups: # Only show controls if data was loaded successfully
+# --- 2. Sidebar for User Input ---
+if groups:
     st.sidebar.header("Controls")
     selected_groups = st.sidebar.multiselect(
         'Select groups to display:',
         options=group_names,
-        default=group_names  # Default to showing all groups
+        default=group_names
     )
 
 # --- 3. Create the 3D Plot ---
@@ -67,10 +65,11 @@ if groups:
         group_name = group["groupName"]
         group_data = group["data"]
         
-        # Determine visibility based on multi-select
         is_visible = (group_name in selected_groups)
 
-        # Create custom hover text for each point
+        # (EDIT: Create a list of RGB color strings for the markers)
+        marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for index, row in group_data.iterrows()]
+        
         hover_texts = [
             f"<b>ID:</b> {row['ID (company, number)']}<br>" +
             f"<b>Marking:</b> {row['Marking']}<br>" +
@@ -84,7 +83,13 @@ if groups:
         fig.add_trace(go.Scatter3d(
             x=group_data['A'], y=group_data['B'], z=group_data['L'],
             mode='markers',
-            marker=dict(size=6, opacity=0.8),
+            # (EDIT: Apply the true colors to each point)
+            marker=dict(
+                size=6,
+                opacity=0.9,
+                color=marker_colors, # Use the list of RGB strings here
+                line=dict(width=1, color='black') # Add a thin border to each point
+            ),
             name=f"Group {group_name}",
             visible=is_visible,
             hovertemplate=hover_texts
