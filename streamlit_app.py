@@ -21,7 +21,7 @@ def load_data():
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
         return None, None
 
-    # --- (EDIT) Define the exact column names we expect ---
+    # Define the exact column names we expect
     required_coords = ['L_star', 'A_star', 'B_star']
     required_colors = ['R', 'G', 'B']
     required_info = ['ID (company, number)', 'Marking', 'Group']
@@ -56,11 +56,28 @@ groups, group_names = load_data()
 selected_groups = []
 if groups:
     st.sidebar.header("Controls")
+
+    # (EDIT: Add Select/Deselect All buttons)
+    # Initialize session state to remember selections
+    if 'selection' not in st.session_state:
+        st.session_state['selection'] = group_names
+
+    # Create columns for the buttons to appear side-by-side
+    col1, col2 = st.sidebar.columns(2)
+    if col1.button("Select All", use_container_width=True):
+        st.session_state['selection'] = group_names
+    if col2.button("Deselect All", use_container_width=True):
+        st.session_state['selection'] = []
+
+    # The multiselect widget's state is now controlled by session_state
     selected_groups = st.sidebar.multiselect(
         'Select groups to display:',
         options=group_names,
-        default=group_names
+        default=st.session_state['selection']
     )
+    # Update the session state with the user's latest selection
+    st.session_state['selection'] = selected_groups
+
 
 # --- 3. Create the 3D Plot ---
 fig = go.Figure()
@@ -101,7 +118,6 @@ if groups:
                 size=7,
                 opacity=1.0, # Make points fully opaque
                 color=marker_colors # Apply true colors
-                # Outline has been removed
             ),
             name=f"Group {group_name}",
             visible=is_visible,
