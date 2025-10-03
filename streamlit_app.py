@@ -23,23 +23,32 @@ def load_data():
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
         return None, None
 
-    # (EDIT: Add validation for R, G, B columns)
-    for col in ['R', 'G', 'B']:
-        if col not in df.columns:
-            st.error(f"Error: Column '{col}' not found in the CSV. Please check your data file.")
-            return None, None
-        # Coerce non-numeric values to NaN, then fill with 0
-        s = pd.to_numeric(df[col], errors='coerce').fillna(0)
-        # Clamp values to the valid 0-255 range and convert to integer
-        df[col] = np.clip(s, 0, 255).astype(int)
+    # --- (EDIT) Color Data Validation (Hex or RGB) ---
+    if 'Hex' in df.columns:
+        # If a 'Hex' column exists, use it as the color source
+        df['color'] = df['Hex'].astype(str)
+    elif all(col in df.columns for col in ['R', 'G', 'B']):
+        # Otherwise, fall back to R, G, B columns
+        for col in ['R', 'G', 'B']:
+            s = pd.to_numeric(df[col], errors='coerce').fillna(0)
+            df[col] = np.clip(s, 0, 255).astype(int)
+        df['color'] = [f"rgb({row['R']}, {row['G']}, {row['B']})" for index, row in df.iterrows()]
+    else:
+        st.error("Error: Your CSV must contain either a 'Hex' column or 'R', 'G', and 'B' columns for colors.")
+        return None, None
 
-    # Get a sorted list of unique group names
+    # --- (EDIT) Group Data Validation ---
     if 'Group' not in df.columns:
         st.error("Error: 'Group' column not found in CSV.")
         return None, None
         
     group_names = sorted(df['Group'].unique().astype(str))
     
+    # If no groups are found after processing, return an error
+    if not group_names:
+        st.warning("No valid groups found in the 'Group' column of your CSV file.")
+        return None, None
+
     # Restructure the data into a list of dictionaries
     grouped_data = []
     for name in group_names:
@@ -56,9 +65,10 @@ groups, group_names = load_data()
 
 # --- 2. Sidebar for User Input (Multi-select) ---
 selected_groups = []
-if groups and group_names: # Only show controls if data and group names were loaded successfully
+# (EDIT: More robust check before creating the widget)
+if groups and group_names and len(group_names) > 0: 
     st.sidebar.header("Controls")
-    selected_groups = st.sidebar.multoselect(
+    selected_groups = st.sidebar.multiselect(
         'Select groups to display:',
         options=group_names,
         default=group_names  # Default to showing all groups
@@ -80,9 +90,6 @@ if groups:
         
         is_visible = (group_name in selected_groups)
 
-        # (EDIT: Create a list of RGB color strings for the markers)
-        marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for index, row in group_data.iterrows()]
-
         hover_texts = [
             f"<b>ID:</b> {row['ID (company, number)']}<br>" +
             f"<b>Marking:</b> {row['Marking']}<br>" +
@@ -96,11 +103,10 @@ if groups:
         fig.add_trace(go.Scatter3d(
             x=group_data['A'], y=group_data['B'], z=group_data['L'],
             mode='markers',
-            # (EDIT: Apply the true colors to each point)
             marker=dict(
                 size=6,
                 opacity=0.9,
-                color=marker_colors, # Use the list of RGB strings here
+                color=group_data['color'], # Use the pre-validated color column
                 line=dict(width=1, color='black') # Add a thin border
             ),
             name=f"Group {group_name}",
