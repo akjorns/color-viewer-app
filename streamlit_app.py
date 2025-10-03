@@ -1,96 +1,114 @@
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
-import pandas as pd # Import the pandas library
+import pandas as pd
 
 # --- App Title and Description ---
 st.set_page_config(layout="wide")
 st.title("Color Marking Analyzer")
 st.write("""
-This app visualizes your color data in the 3D CIE L*a*b* color space.
+This app visualizes your color data in the 3D CIE L*a*b* color space. Each point is colored according to its true RGB value.
 Use the multi-select menu on the left to filter by group.
 """)
 
 # --- 1. Load Your Actual Data from CSV ---
-# This function reads the CSV and processes it.
 @st.cache_data
 def load_data():
-    """Loads color data from the CSV file and groups it."""
+    """Loads and validates data from the CSV file."""
     try:
-        # Read the csv file from your GitHub repository
         df = pd.read_csv("color_data.csv")
     except FileNotFoundError:
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
-        return [], []
+        return None, None
+
+    # --- (EDIT) Define the exact column names we expect ---
+    required_coords = ['L_star', 'A_star', 'B_star']
+    required_colors = ['R', 'G', 'B']
+    required_info = ['ID (company, number)', 'Marking', 'Group']
+    
+    # Check if all required columns exist
+    for col in required_coords + required_colors + required_info:
+        if col not in df.columns:
+            st.error(f"Critical Error: Column '{col}' is missing from your `color_data.csv` file. Please check the file and column headers.")
+            return None, None
+            
+    # --- Data Cleaning and Validation ---
+    for col in required_colors:
+        s = pd.to_numeric(df[col], errors='coerce').fillna(0)
+        df[col] = np.clip(s, 0, 255).astype(int)
 
     # Get a sorted list of unique group names
-    # We convert to string to handle any group numbers correctly.
     group_names = sorted(df['Group'].unique().astype(str))
     
-    # Restructure the data into a list of dictionaries, similar to our old format
+    # Restructure the data
     grouped_data = []
     for name in group_names:
-        # Filter the dataframe for the current group
         group_df = df[df['Group'].astype(str) == name]
-        
-        # Store the relevant data for this group
         grouped_data.append({
             "groupName": name,
             "data": group_df
         })
-        
     return grouped_data, group_names
 
-# Load the data
 groups, group_names = load_data()
 
-# --- 2. Sidebar for User Input (Multi-select) ---
-if groups: # Only show controls if data was loaded successfully
+# --- 2. Sidebar for User Input ---
+selected_groups = []
+if groups:
     st.sidebar.header("Controls")
     selected_groups = st.sidebar.multiselect(
         'Select groups to display:',
         options=group_names,
-        default=group_names  # Default to showing all groups
+        default=group_names
     )
 
 # --- 3. Create the 3D Plot ---
 fig = go.Figure()
 
-# Add the L*a*b* axes lines for context
+# Add the L*a*b* axes lines
 fig.add_trace(go.Scatter3d(x=[0, 0], y=[0, 0], z=[0, 100], mode='lines', line=dict(color='black', width=4), hoverinfo='none'))
-fig.add_trace(go.Scatter3d(x=[-100, 100], y=[0, 0], z=[50, 50], mode='lines', line=dict(color='black', width=4), hoverinfo='none'))
-fig.add_trace(go.Scatter3d(x=[0, 0], y=[-100, 100], z=[50, 50], mode='lines', line=dict(color='black', width=4), hoverinfo='none'))
+fig.add_trace(go.Scatter3d(x=[-128, 127], y=[0, 0], z=[50, 50], mode='lines', line=dict(color='black', width=4), hoverinfo='none'))
+fig.add_trace(go.Scatter3d(x=[0, 0], y=[-128, 127], z=[50, 50], mode='lines', line=dict(color='black', width=4), hoverinfo='none'))
 
-# Add color points for each selected group
+# Plot the data
 if groups:
     for group in groups:
         group_name = group["groupName"]
         group_data = group["data"]
         
-        # Determine visibility based on multi-select
         is_visible = (group_name in selected_groups)
-
-        # Create custom hover text for each point
+        
+        # --- (EDIT) Create colors and hover text from the unique columns ---
+        marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()]
+        
         hover_texts = [
             f"<b>ID:</b> {row['ID (company, number)']}<br>" +
             f"<b>Marking:</b> {row['Marking']}<br>" +
             f"<b>Group:</b> {row['Group']}<br><br>" +
-            f"<b>L*:</b> {row['L']:.2f}<br>" +
-            f"<b>a*:</b> {row['A']:.2f}<br>" +
-            f"<b>b*:</b> {row['B']:.2f}<extra></extra>"
-            for index, row in group_data.iterrows()
+            f"<b>L*:</b> {row['L_star']:.2f}<br>" +
+            f"<b>a*:</b> {row['A_star']:.2f}<br>" +
+            f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
+            for _, row in group_data.iterrows()
         ]
         
         fig.add_trace(go.Scatter3d(
-            x=group_data['A'], y=group_data['B'], z=group_data['L'],
+            # --- (EDIT) Use the renamed coordinate columns ---
+            x=group_data['A_star'], 
+            y=group_data['B_star'], 
+            z=group_data['L_star'],
             mode='markers',
-            marker=dict(size=6, opacity=0.8),
+            marker=dict(
+                size=6,
+                opacity=0.9,
+                color=marker_colors, # Apply true colors
+                line=dict(width=1, color='black')
+            ),
             name=f"Group {group_name}",
             visible=is_visible,
             hovertemplate=hover_texts
         ))
 
-# --- 4. Configure Layout and Display the Plot ---
+# --- 4. Configure Layout ---
 fig.update_layout(
     title_text="3D View of Color Data",
     scene=dict(
@@ -99,8 +117,8 @@ fig.update_layout(
         zaxis=dict(visible=False),
         annotations=[
             dict(x=0, y=0, z=105, text="<b>L*</b>", showarrow=False, font=dict(size=14)),
-            dict(x=110, y=0, z=50, text="<b>a*</b>", showarrow=False, font=dict(size=14)),
-            dict(x=0, y=110, z=50, text="<b>b*</b>", showarrow=False, font=dict(size=14))
+            dict(x=135, y=0, z=50, text="<b>a*</b>", showarrow=False, font=dict(size=14)),
+            dict(x=0, y=135, z=50, text="<b>b*</b>", showarrow=False, font=dict(size=14))
         ],
         camera=dict(
             projection=dict(type='orthographic')
