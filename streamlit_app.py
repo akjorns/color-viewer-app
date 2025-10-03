@@ -78,7 +78,7 @@ if groups:
         
         is_visible = (group_name in selected_groups)
         
-        # --- (EDIT) Create colors and hover text from the unique columns ---
+        # --- Create colors and hover text from the unique columns ---
         marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()]
         
         hover_texts = [
@@ -92,16 +92,16 @@ if groups:
         ]
         
         fig.add_trace(go.Scatter3d(
-            # --- (EDIT) Use the renamed coordinate columns ---
+            # --- Use the renamed coordinate columns ---
             x=group_data['A_star'], 
             y=group_data['B_star'], 
             z=group_data['L_star'],
             mode='markers',
             marker=dict(
-                size=6,
-                opacity=0.9,
-                color=marker_colors, # Apply true colors
-                line=dict(width=1, color='black')
+                size=7,
+                opacity=1.0, # Make points fully opaque
+                color=marker_colors # Apply true colors
+                # Removed the line/border to make colors more pure
             ),
             name=f"Group {group_name}",
             visible=is_visible,
