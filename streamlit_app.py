@@ -21,12 +21,15 @@ def load_data():
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
         return [], []
 
-    # Ensure RGB columns are treated as integers
+    # Ensure RGB columns are treated as valid 0-255 integers
     for col in ['R', 'G', 'B']:
         if col not in df.columns:
             st.error(f"Error: Column '{col}' not found in the CSV. Please check your data file.")
             return [], []
-        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+        # Coerce to numeric, fill non-numeric with 0
+        s = pd.to_numeric(df[col], errors='coerce').fillna(0)
+        # Clamp values to the valid 0-255 range and convert to integer
+        df[col] = np.clip(s, 0, 255).astype(int)
 
     group_names = sorted(df['Group'].unique().astype(str))
     
@@ -67,7 +70,7 @@ if groups:
         
         is_visible = (group_name in selected_groups)
 
-        # (EDIT: Create a list of RGB color strings for the markers)
+        # Create a list of RGB color strings for the markers
         marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for index, row in group_data.iterrows()]
         
         hover_texts = [
@@ -83,7 +86,7 @@ if groups:
         fig.add_trace(go.Scatter3d(
             x=group_data['A'], y=group_data['B'], z=group_data['L'],
             mode='markers',
-            # (EDIT: Apply the true colors to each point)
+            # Apply the true colors to each point
             marker=dict(
                 size=6,
                 opacity=0.9,
