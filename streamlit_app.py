@@ -21,19 +21,23 @@ def load_data():
         df = pd.read_csv("color_data.csv")
     except FileNotFoundError:
         st.error("Error: `color_data.csv` not found. Please make sure it's in your GitHub repository.")
-        return [], []
+        return None, None
 
     # (EDIT: Add validation for R, G, B columns)
     for col in ['R', 'G', 'B']:
         if col not in df.columns:
             st.error(f"Error: Column '{col}' not found in the CSV. Please check your data file.")
-            return [], []
+            return None, None
         # Coerce non-numeric values to NaN, then fill with 0
         s = pd.to_numeric(df[col], errors='coerce').fillna(0)
         # Clamp values to the valid 0-255 range and convert to integer
         df[col] = np.clip(s, 0, 255).astype(int)
 
     # Get a sorted list of unique group names
+    if 'Group' not in df.columns:
+        st.error("Error: 'Group' column not found in CSV.")
+        return None, None
+        
     group_names = sorted(df['Group'].unique().astype(str))
     
     # Restructure the data into a list of dictionaries
@@ -51,7 +55,8 @@ def load_data():
 groups, group_names = load_data()
 
 # --- 2. Sidebar for User Input (Multi-select) ---
-if groups: # Only show controls if data was loaded successfully
+selected_groups = []
+if groups and group_names: # Only show controls if data and group names were loaded successfully
     st.sidebar.header("Controls")
     selected_groups = st.sidebar.multoselect(
         'Select groups to display:',
