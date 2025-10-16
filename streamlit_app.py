@@ -38,6 +38,9 @@ def load_data():
             st.error(f"Critical Error: Column '{col}' is missing from your `color_data.csv` file.")
             return None, None
 
+    # Fill NaN groups with a readable name
+    df['Group'] = df['Group'].fillna('Unknown')
+
     # Clean color columns
     for col in required_colors:
         s = pd.to_numeric(df[col], errors='coerce').fillna(0)
@@ -62,18 +65,24 @@ groups, group_names = load_data()
 # --- 2. Build 3D Plot ---
 fig = go.Figure()
 
-# Axes lines
+# Axes lines (always visible, hidden from legend)
 fig.add_trace(go.Scatter3d(
     x=[0, 0], y=[0, 0], z=[0, 100],
-    mode='lines', line=dict(color='black', width=4), hoverinfo='none'
+    mode='lines', line=dict(color='black', width=4),
+    hoverinfo='none',
+    showlegend=False
 ))
 fig.add_trace(go.Scatter3d(
     x=[-128, 127], y=[0, 0], z=[50, 50],
-    mode='lines', line=dict(color='black', width=4), hoverinfo='none'
+    mode='lines', line=dict(color='black', width=4),
+    hoverinfo='none',
+    showlegend=False
 ))
 fig.add_trace(go.Scatter3d(
     x=[0, 0], y=[-128, 127], z=[50, 50],
-    mode='lines', line=dict(color='black', width=4), hoverinfo='none'
+    mode='lines', line=dict(color='black', width=4),
+    hoverinfo='none',
+    showlegend=False
 ))
 
 # Plot each palette
@@ -126,7 +135,7 @@ fig.update_layout(
         camera=dict(projection=dict(type='orthographic'))
     ),
     margin=dict(r=0, l=0, b=0, t=40),
-    showlegend=True
+    showlegend=True  # keeps palette names in the legend
 )
 
 st.plotly_chart(fig, use_container_width=True)
