@@ -39,7 +39,7 @@ def load_data():
             return None, None
 
     # Fill NaN groups with a readable name
-    df['Group'] = df['Group'].fillna('unique')
+    df['Group'] = df['Group'].fillna('n/a')
 
     # Clean color columns
     for col in required_colors:
