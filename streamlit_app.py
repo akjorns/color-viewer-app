@@ -100,14 +100,21 @@ if groups:
 
         # Hover texts
         hover_texts = [
-            f"<b>ID:</b> {row['ID (company, number)']}<br>"
-            f"<b>Marking:</b> {row['Marking']}<br>"
-            f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
-            f"<b>L*:</b> {row['L_star']:.2f}<br>"
-            f"<b>a*:</b> {row['A_star']:.2f}<br>"
-            f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
-            for _, row in group_data.iterrows()
-        ]
+        f"""
+        <div style='background-color:rgb({row['R']},{row['G']},{row['B']});
+                    color:{"black" if (row['R']*0.299 + row['G']*0.587 + row['B']*0.114) > 186 else "white"};
+                    padding:8px; border-radius:6px;'>
+            <b>ID:</b> {row['ID (company, number)']}<br>
+            <b>Marking:</b> {row['Marking']}<br>
+            <b>Palette:</b> {legend_label.replace('palette ', '')}<br><br>
+            <b>L*:</b> {row['L_star']:.2f}<br>
+            <b>a*:</b> {row['A_star']:.2f}<br>
+            <b>b*:</b> {row['B_star']:.2f}
+        </div>
+        """
+        for _, row in group_data.iterrows()
+    ]
+
 
         fig.add_trace(go.Scatter3d(
             x=group_data['A_star'],
