@@ -124,18 +124,28 @@ if groups:
 fig.update_layout(
     title_text="3D View of 1910's Colors",
     scene=dict(
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
-        zaxis=dict(visible=False),
+        xaxis=dict(
+            visible=False,
+            range=[-128, 128]
+        ),
+        yaxis=dict(
+            visible=False,
+            range=[-128, 128]
+        ),
+        zaxis=dict(
+            visible=False,
+            range=[-128, 128]
+        ),
         annotations=[
-            dict(x=0, y=0, z=105, text="<b>L</b>", showarrow=False, font=dict(size=14, color="#F21578")),
-            dict(x=135, y=0, z=50, text="<b>A</b>", showarrow=False, font=dict(size=14, color="#F21578")),
-            dict(x=0, y=135, z=50, text="<b>B</b>", showarrow=False, font=dict(size=14, color="#F21578"))
+            dict(x=0, y=0, z=128, text="<b>L</b>", showarrow=False, font=dict(size=14, color="#F21578")),
+            dict(x=128, y=0, z=0, text="<b>A</b>", showarrow=False, font=dict(size=14, color="#F21578")),
+            dict(x=0, y=128, z=0, text="<b>B</b>", showarrow=False, font=dict(size=14, color="#F21578"))
         ],
         camera=dict(projection=dict(type='orthographic'))
     ),
     margin=dict(r=0, l=0, b=0, t=40),
     showlegend=True
 )
+
 
 st.plotly_chart(fig, use_container_width=True)
