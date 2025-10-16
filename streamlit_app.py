@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-# --- App Title and Description ---
+# --- Page Setup ---
 st.set_page_config(layout="wide")
 
 # --- Custom CSS Styling ---
@@ -12,7 +12,6 @@ st.markdown("""
     html, body, [class*="css"] {
         color: #F21578 !important;
     }
-
     h1, h2, h3, h4, h5, h6 {
         color: #F21578 !important;
     }
@@ -21,10 +20,9 @@ st.markdown("""
 
 st.title("1910's Color Cards Color Data")
 
-# --- 1. Load Your Actual Data from CSV ---
+# --- 1. Load Data ---
 @st.cache_data
 def load_data():
-    """Loads and validates data from the CSV file."""
     try:
         df = pd.read_csv("color_data.csv")
     except FileNotFoundError:
@@ -34,40 +32,47 @@ def load_data():
     required_coords = ['L_star', 'A_star', 'B_star']
     required_colors = ['R', 'G', 'B']
     required_info = ['ID (company, number)', 'Marking', 'Group']
-    
+
     for col in required_coords + required_colors + required_info:
         if col not in df.columns:
             st.error(f"Critical Error: Column '{col}' is missing from your `color_data.csv` file.")
             return None, None
-            
+
+    # Clean color values
     for col in required_colors:
         s = pd.to_numeric(df[col], errors='coerce').fillna(0)
         df[col] = np.clip(s, 0, 255).astype(int)
 
-    # Sort group names numerically if possible
-    def sort_key(val):
+    # Sort group names properly
+    def safe_float(x):
         try:
-            return int(float(val))
+            return float(x)
         except ValueError:
-            return val
+            return float('inf')
 
-    group_names = sorted(df['Group'].unique().astype(str), key=sort_key)
-    
+    unique_groups = df['Group'].unique()
+    group_names = sorted(
+        unique_groups,
+        key=lambda x: (
+            not str(x).replace('.', '', 1).isdigit(),
+            safe_float(x) if str(x).replace('.', '', 1).isdigit() else str(x)
+        )
+    )
+
     grouped_data = []
     for name in group_names:
-        group_df = df[df['Group'].astype(str) == name]
-        grouped_data.append({
-            "groupName": name,
-            "data": group_df
-        })
+        group_df = df[df['Group'].astype(str) == str(name)]
+        grouped_data.append({"groupName": name, "data": group_df})
+
     return grouped_data, group_names
+
 
 groups, group_names = load_data()
 
-# --- 2. Create the 3D Plot ---
+# --- 2. Build 3D Plot ---
 fig = go.Figure()
 
-# Add the L*a*b* axes lines
+# Axes lines
 fig.add_trace(go.Scatter3d(
     x=[0, 0], y=[0, 0], z=[0, 100],
     mode='lines', line=dict(color='black', width=4), hoverinfo='none'
@@ -81,40 +86,44 @@ fig.add_trace(go.Scatter3d(
     mode='lines', line=dict(color='black', width=4), hoverinfo='none'
 ))
 
-# Plot the data
+# Plot each palette
 if groups:
     for group in groups:
-        # Format group name as integer (remove .0 if present)
-        try:
-            clean_name = str(int(float(group["groupName"])))
-        except ValueError:
-            clean_name = group["groupName"]
-
+        group_name = str(group["groupName"]).rstrip(".0")
         group_data = group["data"]
 
-        # --- Create colors and hover text ---
-        marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()]
+        marker_colors = [
+            f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()
+        ]
+
         hover_texts = [
             f"<b>ID:</b> {row['ID (company, number)']}<br>"
             f"<b>Marking:</b> {row['Marking']}<br>"
-            f"<b>Palette:</b> {clean_name}<br><br>"
+            f"<b>palette:</b> {int(float(row['Group'])) if str(row['Group']).replace('.','',1).isdigit() else row['Group']}<br><br>"
             f"<b>L*:</b> {row['L_star']:.2f}<br>"
             f"<b>a*:</b> {row['A_star']:.2f}<br>"
             f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
             for _, row in group_data.iterrows()
         ]
-        
+
+        legend_name = (
+            f"palette {int(float(group_name))}"
+            if group_name.replace('.', '', 1).isdigit()
+            else f"palette {group_name}"
+        )
+
         fig.add_trace(go.Scatter3d(
-            x=group_data['A_star'], 
-            y=group_data['B_star'], 
+            x=group_data['A_star'],
+            y=group_data['B_star'],
             z=group_data['L_star'],
             mode='markers',
             marker=dict(size=7, opacity=1.0, color=marker_colors),
-            name=f"palette {clean_name}",  # <--- legend name updated here
-            hovertemplate=hover_texts
+            name=legend_name,
+            hovertemplate="%{text}",
+            text=hover_texts
         ))
 
-# --- 3. Configure Layout ---
+# --- 3. Layout and Display ---
 fig.update_layout(
     title_text="3D View of 1910's Colors",
     scene=dict(
