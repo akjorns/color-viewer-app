@@ -67,19 +67,19 @@ fig = go.Figure()
 
 # Axes lines (always visible, hidden from legend)
 fig.add_trace(go.Scatter3d(
-    x=[0, 0], y=[0, 0], z=[0, 100],
+    x=[0, 0], y=[0, 0], z=[-128, 127],
     mode='lines', line=dict(color='black', width=4),
     hoverinfo='none',
     showlegend=False
 ))
 fig.add_trace(go.Scatter3d(
-    x=[-128, 127], y=[0, 0], z=[50, 50],
+    x=[-128, 127], y=[0, 0], z=[0, 0],
     mode='lines', line=dict(color='black', width=4),
     hoverinfo='none',
     showlegend=False
 ))
 fig.add_trace(go.Scatter3d(
-    x=[0, 0], y=[-128, 127], z=[50, 50],
+    x=[0, 0], y=[-128, 127], z=[0, 0],
     mode='lines', line=dict(color='black', width=4),
     hoverinfo='none',
     showlegend=False
@@ -124,19 +124,18 @@ if groups:
 fig.update_layout(
     title_text="3D View of 1910's Colors",
     scene=dict(
-        xaxis=dict(visible=False),
-        yaxis=dict(visible=False),
-        zaxis=dict(visible=False),
+        xaxis=dict(visible=False, range=[-128, 127]),
+        yaxis=dict(visible=False, range=[-128, 127]),
+        zaxis=dict(visible=False, range=[-128, 127]),  # Extend L axis
         annotations=[
-            dict(x=0, y=0, z=105, text="<b>L</b>", showarrow=False, font=dict(size=14, color="#F21578")),
-            dict(x=135, y=0, z=50, text="<b>A</b>", showarrow=False, font=dict(size=14, color="#F21578")),
-            dict(x=0, y=135, z=50, text="<b>B</b>", showarrow=False, font=dict(size=14, color="#F21578"))
+            dict(x=0, y=0, z=135, text="<b>L</b>", showarrow=False, font=dict(size=14, color="#F21578")),
+            dict(x=135, y=0, z=0, text="<b>A</b>", showarrow=False, font=dict(size=14, color="#F21578")),
+            dict(x=0, y=135, z=0, text="<b>B</b>", showarrow=False, font=dict(size=14, color="#F21578"))
         ],
         camera=dict(projection=dict(type='orthographic'))
     ),
     margin=dict(r=0, l=0, b=0, t=40),
     showlegend=True
 )
-
 
 st.plotly_chart(fig, use_container_width=True)
