@@ -5,6 +5,46 @@ import pandas as pd
 
 # --- App Title and Description ---
 st.set_page_config(layout="wide")
+# --- Custom CSS Styling ---
+st.markdown("""
+    <style>
+    /* --- General Text Color --- */
+    html, body, [class*="css"] {
+        color: #3ec467 !important;
+    }
+
+    /* --- Sidebar Text and Labels --- */
+    section[data-testid="stSidebar"] * {
+        color: #3ec467 !important;
+    }
+
+    /* --- Dropdown (Multiselect) Styling --- */
+    div[data-baseweb="select"] > div {
+        color: #3ec467 !important; /* text color inside dropdown */
+        border-color: #3ec467 !important; /* border */
+    }
+
+    div[data-baseweb="select"] svg {
+        fill: #3ec467 !important; /* arrow color */
+    }
+
+    /* --- Buttons (Select/Deselect All) --- */
+    button[kind="secondary"], button[kind="primary"] {
+        color: #3ec467 !important;
+        border: 1px solid #3ec467 !important;
+    }
+    button[kind="secondary"]:hover, button[kind="primary"]:hover {
+        background-color: #3ec467 !important;
+        color: white !important;
+    }
+
+    /* --- Title and Headers --- */
+    h1, h2, h3, h4, h5, h6 {
+        color: #3ec467 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("Color Marking Analyzer")
 st.write("""
 This app visualizes your color data in the 3D CIE L*a*b* color space. Each point is colored according to its true RGB value.
