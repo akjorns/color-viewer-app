@@ -10,37 +10,37 @@ st.markdown("""
     <style>
     /* --- General Text Color --- */
     html, body, [class*="css"] {
-        color: #3ec467 !important;
+        color: #EC460C !important;
     }
 
     /* --- Sidebar Text and Labels --- */
     section[data-testid="stSidebar"] * {
-        color: #3ec467 !important;
+        color: #EC460C !important;
     }
 
     /* --- Dropdown (Multiselect) Styling --- */
     div[data-baseweb="select"] > div {
-        color: #3ec467 !important; /* text color inside dropdown */
-        border-color: #3ec467 !important; /* border */
+        color: #EC460C !important; /* text color inside dropdown */
+        border-color: #EC460C !important; /* border */
     }
 
     div[data-baseweb="select"] svg {
-        fill: #3ec467 !important; /* arrow color */
+        fill: #EC460C !important; /* arrow color */
     }
 
     /* --- Buttons (Select/Deselect All) --- */
     button[kind="secondary"], button[kind="primary"] {
-        color: #3ec467 !important;
-        border: 1px solid #3ec467 !important;
+        color: #EC460C !important;
+        border: 1px solid #EC460C !important;
     }
     button[kind="secondary"]:hover, button[kind="primary"]:hover {
-        background-color: #3ec467 !important;
+        background-color: #EC460C !important;
         color: white !important;
     }
 
     /* --- Title and Headers --- */
     h1, h2, h3, h4, h5, h6 {
-        color: #3ec467 !important;
+        color: #EC460C !important;
     }
     </style>
 """, unsafe_allow_html=True)
