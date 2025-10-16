@@ -99,15 +99,15 @@ if groups:
         marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()]
 
         # Hover texts
-hover_texts = [
-    f"<b>ID:</b> {row['ID (company, number)']}<br>"
-    f"<b>Marking:</b> {row['Marking']}<br>"
-    f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
-    f"<b>L*:</b> {row['L_star']:.2f}<br>"
-    f"<b>a*:</b> {row['A_star']:.2f}<br>"
-    f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
-    for _, row in group_data.iterrows()
-]
+        hover_texts = [
+                f"<b>ID:</b> {row['ID (company, number)']}<br>"
+                f"<b>Marking:</b> {row['Marking']}<br>"
+                f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
+                f"<b>L*:</b> {row['L_star']:.2f}<br>"
+                f"<b>a*:</b> {row['A_star']:.2f}<br>"
+                f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
+                for _, row in group_data.iterrows()
+            ]
 
 
 
