@@ -21,11 +21,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Color Marking Analyzer")
-st.write("""
-This app visualizes your color data in the 3D CIE L*a*b* color space.
-Each point is colored according to its true RGB value.
-""")
+st.title("1910's Color Cards Color Data")
 
 # --- 1. Load Your Actual Data from CSV ---
 @st.cache_data
@@ -119,7 +115,7 @@ if groups:
 
 # --- 3. Configure Layout ---
 fig.update_layout(
-    title_text="3D View of Color Data",
+    title_text="3D View of 1910's Colors",
     scene=dict(
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
