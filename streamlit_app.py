@@ -100,19 +100,17 @@ if groups:
 
         # Hover texts
         hover_texts = [
-            f"""
-            <div style='border:2px solid #F21578; padding:8px; border-radius:6px; color:#F21578;'>
-                <b>ID:</b> {row['ID (company, number)']}<br>
-                <b>Marking:</b> {row['Marking']}<br>
-                <b>Palette:</b> {legend_label.replace('palette ', '')}<br><br>
-                <b>L*:</b> {row['L_star']:.2f}<br>
-                <b>a*:</b> {row['A_star']:.2f}<br>
-                <b>b*:</b> {row['B_star']:.2f}
-            </div>
-            """
-            for _, row in group_data.iterrows()
-        ]
-        
+                f"<b>ID:</b> {row['ID (company, number)']}<br>"
+                f"<b>Marking:</b> {row['Marking']}<br>"
+                f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
+                f"<b>L*:</b> {row['L_star']:.2f}<br>"
+                f"<b>a*:</b> {row['A_star']:.2f}<br>"
+                f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
+                for _, row in group_data.iterrows()
+            ]
+
+
+
         fig.add_trace(go.Scatter3d(
             x=group_data['A_star'],
             y=group_data['B_star'],
@@ -123,7 +121,6 @@ if groups:
             hovertemplate="%{text}",
             text=hover_texts
         ))
-
 
 # --- 3. Layout and Display ---
 fig.update_layout(
