@@ -18,7 +18,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("1910's Color Cards Color Data")
+st.title("1910's Color Cards Data")
 
 # --- 1. Load Data ---
 @st.cache_data
