@@ -95,7 +95,7 @@ if groups:
 
         hover_texts = [
             f"<span style='color:rgb({row['R']},{row['G']},{row['B']});'>"
-            f"<b>ID:</b> {row['ID (company, number)']}<br>"
+            f"<b>Marking:</b> {row['Marking']}<br>"
             f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
             f"<b>L*:</b> {row['L_star']:.2f}<br>"
             f"<b>a*:</b> {row['A_star']:.2f}<br>"
