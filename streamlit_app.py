@@ -100,16 +100,14 @@ if groups:
 
         # Hover texts
         hover_texts = [
-                f"<b>ID:</b> {row['ID (company, number)']}<br>"
-                f"<b>Marking:</b> {row['Marking']}<br>"
-                f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
-                f"<b>L*:</b> {row['L_star']:.2f}<br>"
-                f"<b>a*:</b> {row['A_star']:.2f}<br>"
-                f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
-                for _, row in group_data.iterrows()
-            ]
-
-
+            f"<b>ID:</b> {row['ID (company, number)']}<br>"
+            f"<b>Marking:</b> {row['Marking']}<br>"
+            f"<b>palette:</b> {legend_label.replace('palette ', '')}<br><br>"
+            f"<b>L*:</b> {row['L_star']:.2f}<br>"
+            f"<b>a*:</b> {row['A_star']:.2f}<br>"
+            f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
+            for _, row in group_data.iterrows()
+        ]
 
         fig.add_trace(go.Scatter3d(
             x=group_data['A_star'],
@@ -137,7 +135,12 @@ fig.update_layout(
         camera=dict(projection=dict(type='orthographic'))
     ),
     margin=dict(r=0, l=0, b=0, t=40),
-    showlegend=True
+    showlegend=True,
+    hoverlabel=dict(
+        font_color="#F21578",   # hover text color
+        bordercolor="#F21578",  # hover border color
+        bgcolor="white"         # optional background color
+    )
 )
 
 st.plotly_chart(fig, use_container_width=True)
