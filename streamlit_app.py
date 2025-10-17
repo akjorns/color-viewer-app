@@ -170,3 +170,51 @@ if groups:
     )
 
     st.plotly_chart(l_axis_fig, use_container_width=True)
+
+
+# --- 5. Marking-Ordered Graph ---
+if groups:
+    marking_fig = go.Figure()
+
+    # Combine all groups into a single DataFrame for ordering
+    all_data = pd.concat([group["data"] for group in groups], ignore_index=True)
+
+    # Ensure 'Marking' is numeric for proper sorting
+    all_data['Marking_numeric'] = pd.to_numeric(all_data['Marking'], errors='coerce')
+    all_data = all_data.sort_values('Marking_numeric')
+
+    marker_colors = [f"rgb({row['R']},{row['G']},{row['B']})" for _, row in all_data.iterrows()]
+
+    hover_texts = [
+        f"<b>Marking:</b> {row['Marking']}<br>"
+        f"<b>Palette Group:</b> {row['Group']}<br>"
+        f"<b>L*:</b> {row['L_star']:.2f}<br>"
+        f"<b>a*:</b> {row['A_star']:.2f}<br>"
+        f"<b>b*:</b> {row['B_star']:.2f}<extra></extra>"
+        for _, row in all_data.iterrows()
+    ]
+
+    marking_fig.add_trace(go.Scatter(
+        x=all_data['Marking_numeric'],
+        y=[1]*len(all_data),  # just place all on the same horizontal line
+        mode='markers',
+        marker=dict(size=10, color=marker_colors),
+        text=hover_texts,
+        hoverinfo='text'
+    ))
+
+    marking_fig.update_layout(
+        title_text="Colors Ordered by Marking",
+        xaxis_title="Marking",
+        yaxis=dict(visible=False),  # hide y-axis
+        plot_bgcolor="white",
+        hoverlabel=dict(
+            font_color="#F21578",
+            bordercolor="#F21578",
+            bgcolor="white"
+        ),
+        margin=dict(r=20, l=20, b=40, t=40)
+    )
+
+    st.plotly_chart(marking_fig, use_container_width=True)
+
