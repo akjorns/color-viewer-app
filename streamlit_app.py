@@ -38,15 +38,12 @@ def load_data():
             st.error(f"Critical Error: Column '{col}' is missing from your `color_data.csv` file.")
             return None, None
 
-    # Fill NaN groups with a readable name
     df['Group'] = df['Group'].fillna('n/a')
 
-    # Clean color columns
     for col in required_colors:
         s = pd.to_numeric(df[col], errors='coerce').fillna(0)
         df[col] = np.clip(s, 0, 255).astype(int)
 
-    # --- Sort group names properly (numeric first, then text) ---
     def sort_key(x):
         s = str(x).strip()
         return (not s.replace('.', '', 1).isdigit(), float(s) if s.replace('.', '', 1).isdigit() else s)
@@ -91,14 +88,11 @@ if groups:
         group_name = str(group["groupName"]).strip()
         group_data = group["data"]
 
-        # Determine numeric vs text for legend
         is_numeric = group_name.replace('.', '', 1).isdigit()
         legend_label = f"palette {int(float(group_name))}" if is_numeric else f"palette {group_name}"
 
-        # Marker colors
         marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in group_data.iterrows()]
 
-        # Hover texts
         hover_texts = [
             f"<span style='color:rgb({row['R']},{row['G']},{row['B']});'>"
             f"<b>ID:</b> {row['ID (company, number)']}<br>"
@@ -138,10 +132,42 @@ fig.update_layout(
     margin=dict(r=0, l=0, b=0, t=40),
     showlegend=True,
     hoverlabel=dict(
-        font_color="#F21578",   # hover text color
-        bordercolor="#F21578",  # hover border color
-        bgcolor="white"         # optional background color
+        font_color="#F21578",
+        bordercolor="#F21578",
+        bgcolor="white"
     )
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# --- 4. Isolated L-axis Graph ---
+if groups:
+    l_axis_fig = go.Figure()
+
+    for group in groups:
+        group_name = str(group["groupName"]).strip()
+        group_data = group["data"]
+        marker_colors = [f"rgb({row['R']},{row['G']},{row['B']})" for _, row in group_data.iterrows()]
+
+        l_axis_fig.add_trace(go.Scatter(
+            x=[group_name]*len(group_data),
+            y=group_data['L_star'],
+            mode='markers',
+            marker=dict(size=10, color=marker_colors),
+            name=f"palette {group_name}"
+        ))
+
+    l_axis_fig.update_layout(
+        title_text="L* Axis Distribution",
+        xaxis_title="Palette Group",
+        yaxis_title="L* (Lightness)",
+        plot_bgcolor="white",
+        hoverlabel=dict(
+            font_color="#F21578",
+            bordercolor="#F21578",
+            bgcolor="white"
+        ),
+        margin=dict(r=20, l=20, b=40, t=40)
+    )
+
+    st.plotly_chart(l_axis_fig, use_container_width=True)
