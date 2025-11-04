@@ -143,7 +143,13 @@ if groups:
     l_axis_fig = go.Figure()
 
     for group in groups:
-        group_name = str(group["groupName"]).strip()
+        raw_name = str(group["groupName"]).strip()
+
+        if raw_name.replace('.', '', 1).isdigit():
+            group_name = str(int(float(raw_name)))
+        else:
+            group_name = raw_name
+
         group_data = group["data"]
         marker_colors = [f"rgb({row['R']},{row['G']},{row['B']})" for _, row in group_data.iterrows()]
 
@@ -168,6 +174,7 @@ if groups:
     )
 
     st.plotly_chart(l_axis_fig, use_container_width=True)
+
 
 # --- 4B. A* Axis Distribution ---
 if groups:
