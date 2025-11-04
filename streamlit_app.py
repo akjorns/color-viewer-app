@@ -162,7 +162,7 @@ if groups:
         ))
 
     l_axis_fig.update_layout(
-        xaxis_title="Palette Group",
+        xaxis_title="Palette",
         yaxis_title="L* (Lightness)",
         plot_bgcolor="white",
         hoverlabel=dict(
