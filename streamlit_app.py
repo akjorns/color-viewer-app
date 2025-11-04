@@ -283,3 +283,31 @@ if groups:
 
     st.plotly_chart(marking_fig, use_container_width=True)
 
+
+fig_ab_density = go.Figure(data=go.Histogram2d(
+    x=all_data['A_star'], y=all_data['B_star'],
+    colorscale='Viridis', nbinsx=30, nbinsy=30
+))
+fig_ab_density.update_layout(title="A* vs B* Density Map")
+st.plotly_chart(fig_ab_density, use_container_width=True)
+
+
+from sklearn.cluster import KMeans
+
+X = all_data[['L_star', 'A_star', 'B_star']]
+kmeans = KMeans(n_clusters=5, random_state=42).fit(X)
+all_data['Cluster'] = kmeans.labels_
+
+fig_cluster = go.Figure()
+for c in sorted(all_data['Cluster'].unique()):
+    cluster_df = all_data[all_data['Cluster'] == c]
+    fig_cluster.add_trace(go.Scatter3d(
+        x=cluster_df['A_star'], y=cluster_df['B_star'], z=cluster_df['L_star'],
+        mode='markers',
+        marker=dict(size=7, color=f"hsl({c*60},70%,50%)"),
+        name=f"Cluster {c}"
+    ))
+fig_cluster.update_layout(title="K-Means Color Clusters in L*a*b* Space")
+st.plotly_chart(fig_cluster, use_container_width=True)
+
+
