@@ -116,7 +116,6 @@ if groups:
 
 # --- 3. Layout and Display ---
 fig.update_layout(
-    title_text="3D View of 1910's Colors",
     scene=dict(
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
@@ -157,7 +156,6 @@ if groups:
         ))
 
     l_axis_fig.update_layout(
-        title_text="L* Axis Distribution",
         xaxis_title="Palette Group",
         yaxis_title="L* (Lightness)",
         plot_bgcolor="white",
@@ -189,7 +187,6 @@ if groups:
         ))
 
     a_axis_fig.update_layout(
-        title_text="A* Axis Distribution",
         xaxis_title="Palette Group",
         yaxis_title="A* (Green–Red)",
         plot_bgcolor="white",
@@ -221,7 +218,6 @@ if groups:
         ))
 
     b_axis_fig.update_layout(
-        title_text="B* Axis Distribution",
         xaxis_title="Palette Group",
         yaxis_title="B* (Blue–Yellow)",
         plot_bgcolor="white",
@@ -269,7 +265,6 @@ if groups:
     ))
 
     marking_fig.update_layout(
-        title_text="Colors Ordered by Marking",
         xaxis_title="Marking",
         yaxis=dict(visible=False),  # hide y-axis
         plot_bgcolor="white",
