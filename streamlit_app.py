@@ -171,6 +171,71 @@ if groups:
 
     st.plotly_chart(l_axis_fig, use_container_width=True)
 
+# --- 4B. A* Axis Distribution ---
+if groups:
+    a_axis_fig = go.Figure()
+
+    for group in groups:
+        group_name = str(group["groupName"]).strip()
+        group_data = group["data"]
+        marker_colors = [f"rgb({row['R']},{row['G']},{row['B']})" for _, row in group_data.iterrows()]
+
+        a_axis_fig.add_trace(go.Scatter(
+            x=[group_name]*len(group_data),
+            y=group_data['A_star'],
+            mode='markers',
+            marker=dict(size=10, color=marker_colors),
+            name=f"palette {group_name}"
+        ))
+
+    a_axis_fig.update_layout(
+        title_text="A* Axis Distribution",
+        xaxis_title="Palette Group",
+        yaxis_title="A* (Green–Red)",
+        plot_bgcolor="white",
+        hoverlabel=dict(
+            font_color="#F21578",
+            bordercolor="#F21578",
+            bgcolor="white"
+        ),
+        margin=dict(r=20, l=20, b=40, t=40)
+    )
+
+    st.plotly_chart(a_axis_fig, use_container_width=True)
+
+# --- 4C. B* Axis Distribution ---
+if groups:
+    b_axis_fig = go.Figure()
+
+    for group in groups:
+        group_name = str(group["groupName"]).strip()
+        group_data = group["data"]
+        marker_colors = [f"rgb({row['R']},{row['G']},{row['B']})" for _, row in group_data.iterrows()]
+
+        b_axis_fig.add_trace(go.Scatter(
+            x=[group_name]*len(group_data),
+            y=group_data['B_star'],
+            mode='markers',
+            marker=dict(size=10, color=marker_colors),
+            name=f"palette {group_name}"
+        ))
+
+    b_axis_fig.update_layout(
+        title_text="B* Axis Distribution",
+        xaxis_title="Palette Group",
+        yaxis_title="B* (Blue–Yellow)",
+        plot_bgcolor="white",
+        hoverlabel=dict(
+            font_color="#F21578",
+            bordercolor="#F21578",
+            bgcolor="white"
+        ),
+        margin=dict(r=20, l=20, b=40, t=40)
+    )
+
+    st.plotly_chart(b_axis_fig, use_container_width=True)
+
+
 
 # --- 5. Marking-Ordered Graph ---
 if groups:
