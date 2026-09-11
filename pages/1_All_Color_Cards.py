@@ -18,7 +18,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("All Color Cards 3D Visualization")
+st.title("Color Cards Data")
 
 # --- 1. Load Data ---
 @st.cache_data
