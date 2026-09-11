@@ -143,8 +143,8 @@ if cards:
 # --- 4. Layout and Display ---
 fig.update_layout(
     scene=dict(
-        xaxis=dict(visible=False, range=[-130, 130]),
-        yaxis=dict(visible=False, range=[-130, 130]),
+        xaxis=dict(visible=False, range=[-145, 145]),
+        yaxis=dict(visible=False, range=[-145, 145]),
         zaxis=dict(visible=False, range=[-10, 110]),
         aspectmode='cube',  # Forces the 3D space to stay a perfect cube
         annotations=[
