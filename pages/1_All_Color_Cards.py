@@ -24,10 +24,14 @@ st.title("All Color Cards 3D Visualization")
 @st.cache_data
 def load_master_data():
     try:
-        df = pd.read_csv("MasterColorData.csv")
+        # encoding='utf-8-sig' automatically strips hidden Excel BOM characters
+        df = pd.read_csv("MasterColorData.csv", encoding="utf-8-sig")
     except FileNotFoundError:
         st.error("Error: `MasterColorData.csv` not found. Please make sure it is in your GitHub repository root.")
         return None, None
+
+    # Strip any accidental whitespace or hidden characters from all column headers
+    df.columns = df.columns.astype(str).str.replace('\ufeff', '').str.strip()
 
     required_coords = ['L_star', 'A_star', 'B_star']
     required_colors = ['R', 'G', 'B']
@@ -35,7 +39,7 @@ def load_master_data():
 
     for col in required_coords + required_colors + required_info:
         if col not in df.columns:
-            st.error(f"Critical Error: Column '{col}' is missing from `MasterColorData.csv`.")
+            st.error(f"Critical Error: Column '{col}' is missing from `MasterColorData.csv`. Detected columns: {list(df.columns)}")
             return None, None
 
     # Validate RGB values
@@ -52,8 +56,6 @@ def load_master_data():
         card_data.append({"cardName": name, "data": sub_df})
 
     return card_data, card_names
-
-cards, card_names = load_master_data()
 
 # --- 2. Sidebar Navigation & Selection ---
 selected_cards = []
