@@ -64,26 +64,6 @@ def load_master_data():
 # Explicitly assign variables from the loader
 cards, card_names = load_master_data()
 
-# --- 2. Sidebar Navigation & Selection ---
-selected_cards = []
-if cards and card_names:
-    st.sidebar.header("Controls")
-
-    if 'master_card_selection' not in st.session_state:
-        st.session_state['master_card_selection'] = card_names
-
-    col1, col2 = st.sidebar.columns(2)
-    if col1.button("Select All", use_container_width=True):
-        st.session_state['master_card_selection'] = card_names
-    if col2.button("Deselect All", use_container_width=True):
-        st.session_state['master_card_selection'] = []
-
-    selected_cards = st.sidebar.multiselect(
-        'Select Color Cards to display:',
-        options=card_names,
-        default=st.session_state['master_card_selection']
-    )
-    st.session_state['master_card_selection'] = selected_cards
 
 # --- 3. Build 3D Plot ---
 fig = go.Figure()
@@ -114,8 +94,6 @@ if cards:
         card_name = item["cardName"]
         card_df = item["data"]
 
-        is_visible = card_name in selected_cards
-
         marker_colors = [f"rgb({row['R']}, {row['G']}, {row['B']})" for _, row in card_df.iterrows()]
 
         hover_texts = [
@@ -135,7 +113,6 @@ if cards:
             mode='markers',
             marker=dict(size=7, opacity=1.0, color=marker_colors),
             name=card_name,
-            visible=is_visible,
             hovertemplate="%{text}",
             text=hover_texts
         ))
