@@ -602,7 +602,7 @@ RSSS29,Real Silk Spring Summer 1925,52.5,5.5,11.1,140,122,107
 RSSS30,Real Silk Spring Summer 1925,42.7,-22.8,-2.6,47,111,104
 RSSS31,Real Silk Spring Summer 1925,44,-18.6,-4.4,61,113,111
 RSSS32,Real Silk Spring Summer 1925,44.6,1.4,20.5,117,104,71
-RSSS33,Real Silk Spring Summer 1925,44.6,35.1,26.9,193,130,100
+RSSS33,Real Silk Spring Summer 1925,60.1,20.9,26.9,193,130,100
 RSSS34,Real Silk Spring Summer 1925,44.6,7.9,19.7,126,100,73
 RSSS35,Real Silk Spring Summer 1925,44.6,26.7,18.9,150,85,74
 RSSS36,Real Silk Spring Summer 1925,44.6,1.4,20.5,117,104,71
@@ -612,9 +612,9 @@ RSSS39,Real Silk Spring Summer 1925,73.3,8.6,32.3,210,174,121
 RSSS40,Real Silk Spring Summer 1925,64.3,19,34.9,201,142,94
 RSSS41,Real Silk Spring Summer 1925,29.6,12.4,-15.7,80,64,94
 RSSS42,Real Silk Spring Summer 1925,44,-18.6,-4.4,61,113,111
-RSSS43,Real Silk Spring Summer 1925,37.2,-1.2,15.8,74,89,113
-RSSS44,Real Silk Spring Summer 1925,37.2,-1.2,15.8,74,89,113
-RSSS45,Real Silk Spring Summer 1925,53.6,32.2,3.2,144,126,71
+RSSS43,Real Silk Spring Summer 1925,37.2,-1.2,-15.8,74,89,113
+RSSS44,Real Silk Spring Summer 1925,37.2,-1.2,-15.8,74,89,113
+RSSS45,Real Silk Spring Summer 1925,53.6,-0.7,32.3,144,126,71
 RSSS46,Real Silk Spring Summer 1925,32,6.7,6.1,88,71,66
 RSSS47,Real Silk Spring Summer 1925,64.3,19.1,34.9,201,142,94
 RSSS48,Real Silk Spring Summer 1925,44.9,46,5.1,174,69,100
@@ -663,7 +663,7 @@ RSSS90,Real Silk Spring Summer 1925,66.7,15.7,11.2,195,152,143
 RSSS91,Real Silk Spring Summer 1925,50,19,29.4,159,106,70
 RSSS92,Real Silk Spring Summer 1925,0,0,0,0,0,0
 RSSS93,Real Silk Spring Summer 1925,76.7,17.7,16.9,229,177,159
-RSSS94,Real Silk Spring Summer 1925,60.5,35.1,26.9,193,130,100
+RSSS94,Real Silk Spring Summer 1925,60.5,20.9,26.9,193,130,100
 RSSS95,Real Silk Spring Summer 1925,0,0,0,0,0,0
 RSSS96,Real Silk Spring Summer 1925,0,0,0,0,0,0
 RSSS97,Real Silk Spring Summer 1925,60.3,-14.3,19,129,152,111
@@ -695,7 +695,7 @@ RSSS122,Real Silk Spring Summer 1925,70.6,0.3,25.3,186,172,127
 RSSS123,Real Silk Spring Summer 1925,54.9,-8.9,-4.2,111,136,138
 RSSS124,Real Silk Spring Summer 1925,73.3,8.6,32.3,210,174,121
 RSSS125,Real Silk Spring Summer 1925,73.8,8.8,15.8,205,175,153
-RSSS126,Real Silk Spring Summer 1925,60.5,35.1,26.9,193,130,100
+RSSS126,Real Silk Spring Summer 1925,60.5,20.9,26.9,193,130,100
 RSSS127,Real Silk Spring Summer 1925,65,30.3,36.5,220,136,94
 RSSS128,Real Silk Spring Summer 1925,66.7,15.7,11.2,195,152,143
 RSSS129,Real Silk Spring Summer 1925,57.1,30.7,16.6,192,115,110
